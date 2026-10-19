@@ -24,7 +24,3 @@
 | Maintenance | **$150–200/mo** |
 
 → [Hire on LaborX](https://laborx.com/freelancers/users/id475124) · [Profile](https://github.com/nyyoautomation)
-
-<details><summary>🇫🇷 Français</summary>
-Galerie de workflows n8n : essayez le [simulateur](https://cdn.jsdelivr.net/gh/nyyoautomation/nyyo-n8n-workflows@main/index.html). Lead → CRM → alerte Slack. À partir de **100 $**.
-</details>
