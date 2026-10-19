@@ -6,7 +6,7 @@
 >
 > **Try it in 1 click:** open the [**live simulator**](https://nyyoautomation.github.io/nyyo-n8n-workflows/), click **Run workflow**, watch the steps and JSON.
 >
-> **Business benefit:** sales reacts in seconds instead of hours. Workflows from **$100**, agents from **$500**.
+> **Business benefit:** sales reacts in seconds instead of hours. Workflows from **$159**, AI workflows from **$359**.
 
 ![Demo](docs/demo.gif)
 
@@ -19,9 +19,9 @@
 ## What’s for sale
 | | |
 |---|---|
-| Workflow | from **$100–400** |
-| AI agent | from **$500** |
-| Maintenance | **$150–200/mo** |
+| Workflow (no AI) | from **$159** |
+| Workflow with AI | from **$359** |
+| Maintenance | **$49–59/mo** |
 
 → [Hire on LaborX](https://laborx.com/freelancers/users/id475124) · [Profile](https://github.com/nyyoautomation)
 
