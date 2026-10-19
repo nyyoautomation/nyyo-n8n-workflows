@@ -24,3 +24,7 @@
 | Maintenance | **$150–200/mo** |
 
 → [Hire on LaborX](https://laborx.com/freelancers/users/id475124) · [Profile](https://github.com/nyyoautomation)
+
+## Free install kit included
+
+Importable workflow JSON in `workflows/` + ZIP in `dist/`. **Free, included with every package.** Make blueprints on request (free).

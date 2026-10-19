@@ -1,0 +1,27 @@
+[
+  {
+    "file": "01_lead_to_crm.json",
+    "path": "workflows/01_lead_to_crm.json",
+    "title": "01 lead to crm"
+  },
+  {
+    "file": "02_invoice_to_sheet.json",
+    "path": "workflows/02_invoice_to_sheet.json",
+    "title": "02 invoice to sheet"
+  },
+  {
+    "file": "03_inbox_triage.json",
+    "path": "workflows/03_inbox_triage.json",
+    "title": "03 inbox triage"
+  },
+  {
+    "file": "04_review_thanks.json",
+    "path": "workflows/04_review_thanks.json",
+    "title": "04 review thanks"
+  },
+  {
+    "file": "05_price_watch.json",
+    "path": "workflows/05_price_watch.json",
+    "title": "05 price watch"
+  }
+]
