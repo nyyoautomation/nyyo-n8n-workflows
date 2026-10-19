@@ -1,0 +1,78 @@
+# Self-hosted n8n for the Nyyo Automation templates (free install kit).
+#
+#   ./setup.sh                 (Mac / Linux)  creates .env, starts n8n, imports the 3 workflows
+#   .\setup.ps1                (Windows)      same thing in PowerShell
+#
+# Everyday commands, run in this folder:
+#   docker compose up -d       start n8n          -> http://localhost:5678
+#   docker compose stop        stop n8n (your workflows and settings are kept)
+#   docker compose logs -f n8n see what n8n is doing
+#
+# Default database: SQLite inside the "n8n_data" volume (fine for one person or a small team).
+# Optional Postgres: run "./setup.sh --postgres" on the FIRST setup (it sets COMPOSE_PROFILES=postgres in .env).
+#
+# Full guide: INSTALL.md. No credentials are stored in this kit. Contact: LaborX (https://laborx.com/freelancers/users/id475124)
+
+name: nyyo-n8n
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:${N8N_VERSION:-2.43.8}
+    restart: unless-stopped
+    ports:
+      # Only reachable from this computer. Change to "${N8N_PORT:-5678}:5678" only if you want LAN access.
+      - "127.0.0.1:${N8N_PORT:-5678}:5678"
+    environment:
+      N8N_ENCRYPTION_KEY: "${N8N_ENCRYPTION_KEY:?N8N_ENCRYPTION_KEY is missing: run setup.sh / setup.ps1, or copy .env.example to .env and fill it in}"
+      GENERIC_TIMEZONE: "${TIMEZONE:-UTC}"
+      TZ: "${TIMEZONE:-UTC}"
+      N8N_HOST: "localhost"
+      N8N_PORT: "5678"
+      N8N_PROTOCOL: "http"
+      WEBHOOK_URL: "${WEBHOOK_URL:-http://localhost:5678/}"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      # Database: "sqlite" (default) or "postgresdb" (with the postgres profile).
+      DB_TYPE: "${DB_TYPE:-sqlite}"
+      DB_POSTGRESDB_HOST: "postgres"
+      DB_POSTGRESDB_PORT: "5432"
+      DB_POSTGRESDB_DATABASE: "${POSTGRES_DB:-n8n}"
+      DB_POSTGRESDB_USER: "${POSTGRES_USER:-n8n}"
+      DB_POSTGRESDB_PASSWORD: "${POSTGRES_PASSWORD:-}"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # The 3 templates, read-only, so the setup script can import them with the n8n CLI.
+      - ./workflows:/import/workflows:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz/readiness >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 20s
+    depends_on:
+      postgres:
+        condition: service_healthy
+        required: false
+
+  # Optional. Starts only when the "postgres" profile is active (COMPOSE_PROFILES=postgres in .env).
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB:-n8n}"
+      POSTGRES_USER: "${POSTGRES_USER:-n8n}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # No published port: only n8n talks to it.
+
+volumes:
+  n8n_data:
+  postgres_data:

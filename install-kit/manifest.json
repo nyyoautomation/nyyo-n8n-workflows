@@ -1,6 +1,6 @@
 {
   "name": "Nyyo Automation n8n templates",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "tested_on": "n8n 2.43.8 self-hosted",
   "license": "MIT",
   "workflows": [
@@ -19,5 +19,18 @@
       "path": "workflows/03_support_inbox_triage_slack.json",
       "title": "Triage support emails from IMAP, alert Slack on urgent ones and auto-acknowledge the rest"
     }
-  ]
+  ],
+  "one_command_setup": {
+    "mac_linux": "./setup.sh",
+    "windows": "powershell -ExecutionPolicy Bypass -File .\\setup.ps1",
+    "options": [
+      "--postgres / -Postgres",
+      "--port N / -Port N"
+    ],
+    "compose": "docker-compose.yml",
+    "env_template": ".env.example",
+    "guide": "INSTALL.md",
+    "n8n_image": "docker.n8n.io/n8nio/n8n:2.43.8",
+    "database": "SQLite (default) or Postgres 16 (optional profile)"
+  }
 }

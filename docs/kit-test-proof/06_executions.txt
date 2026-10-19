@@ -1,0 +1,7 @@
+3 execution(s) of workflow lL4gwQCyMi7bwefc
+- execution 1: mode=webhook status=success started=2026-10-19 21:07:25.064 stopped=2026-10-19 21:07:25.905
+  nodes run: Receive form lead, Config, Normalize and validate lead, Lead is valid?, OpenAI Chat Model, Draft reply with AI, Prepare sheet row, Append lead to Google Sheets, Notify sales channel in Slack, Respond: lead accepted
+- execution 2: mode=webhook status=success started=2026-10-19 21:07:25.939 stopped=2026-10-19 21:07:25.966
+  nodes run: Receive form lead, Config, Normalize and validate lead, Lead is valid?, Respond: invalid lead
+- execution 3: mode=webhook status=success started=2026-10-19 21:07:25.992 stopped=2026-10-19 21:07:26.017
+  nodes run: Receive form lead, Config, Normalize and validate lead, Lead is valid?, Respond: invalid lead

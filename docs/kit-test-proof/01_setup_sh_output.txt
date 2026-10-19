@@ -1,0 +1,43 @@
+
+==> 1/5 Checking Docker
+    OK  Docker version 26.1.5+dfsg1, build a72d7cd
+    OK  Docker Compose version 2.26.1-4
+
+==> 2/5 Preparing settings (.env)
+    OK  Created .env with a random encryption key (keep this file private, and back it up)
+    OK  Database: SQLite · Time zone: UTC · Address: http://localhost:5678
+
+==> 3/5 Starting n8n (the first start downloads about 1 GB, allow a few minutes)
+ Network nyyo-n8n_default  Creating
+ Network nyyo-n8n_default  Created
+ Volume "nyyo-n8n_n8n_data"  Creating
+ Volume "nyyo-n8n_n8n_data"  Created
+ Container nyyo-n8n-n8n-1  Creating
+ Container nyyo-n8n-n8n-1  Created
+ Container nyyo-n8n-n8n-1  Starting
+ Container nyyo-n8n-n8n-1  Started
+
+==> 4/5 Waiting for n8n to be ready
+    OK  n8n is up at http://localhost:5678 (2.43.8)
+
+==> 5/5 Importing the 3 workflows with the n8n CLI
+    OK  Imported: Send website form leads to Google Sheets and Slack with an AI-drafted reply
+    OK  Imported: Extract invoice data from email PDF attachments into Google Sheets
+    OK  Imported: Triage support emails from IMAP, alert Slack on urgent ones and auto-acknowledge the rest
+    OK  3 imported, 0 already present, 3 workflow(s) in n8n
+
+All set. n8n is running at http://localhost:5678
+
+Next steps
+  1. Open http://localhost:5678 in your browser and create the owner account.
+     This account lives only in your own n8n; nothing is sent to Nyyo Automation.
+  2. Open Overview > Workflows. You will see the 3 templates (inactive).
+  3. Open one, read the yellow sticky note, fill in the Config node.
+  4. Connect your accounts (Google Sheets, Slack, OpenAI, email): docs/INSTALL.md, step 4.
+  5. Test with the fictional data in test-data/, then publish (activate) the workflow.
+
+Everyday commands (in this folder)
+  Stop:   docker compose stop          Start again: docker compose up -d
+  Logs:   docker compose logs -f n8n   Update n8n:  change N8N_VERSION in .env, then docker compose up -d
+Keep .env private and back it up: it holds the key that protects your saved credentials.
+Help: INSTALL.md (Troubleshooting) · LaborX (https://laborx.com/freelancers/users/id475124)

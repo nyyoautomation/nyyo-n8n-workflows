@@ -1,0 +1,3 @@
+lL4gwQCyMi7bwefc|Send website form leads to Google Sheets and Slack with an AI-drafted reply
+hQgbG198tRK0xK4L|Extract invoice data from email PDF attachments into Google Sheets
+IF9GVABax83MCmUI|Triage support emails from IMAP, alert Slack on urgent ones and auto-acknowledge the rest

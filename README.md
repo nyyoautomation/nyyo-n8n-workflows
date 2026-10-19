@@ -10,21 +10,36 @@ Three free, ready-to-import n8n workflows for everyday small-business jobs. Each
 | 02 | [Extract invoice data from email PDF attachments into Google Sheets](workflows/02_invoice_email_pdf_to_sheets.json) | Email Trigger (IMAP), Code, Extract from File, Google Sheets | No |
 | 03 | [Triage support emails from IMAP, alert Slack on urgent ones and auto-acknowledge the rest](workflows/03_support_inbox_triage_slack.json) | Email Trigger (IMAP), Code, Filter, If, Slack, Send Email (SMTP), Google Sheets | No |
 
-**Tested on:** n8n 2.43.8, self-hosted (Docker). Not yet tested on n8n Cloud.
+**Tested on:** n8n 2.43.8, self-hosted (Docker). Not yet tested on n8n Cloud. The one-command kit was tested from scratch on Linux (Docker Engine); see [docs/TESTING.md](docs/TESTING.md).
 **Licence:** MIT (see [LICENSE](LICENSE)).
 
-## Quick start
-1. Download a JSON file from [`workflows/`](workflows/) (or the full ZIP in [`dist/`](dist/)).
+## One-command install (free kit, Docker)
+No n8n yet? The kit starts a self-hosted n8n on your computer and imports the 3 templates for you.
+
+1. Install Docker Desktop and download the ZIP from [`dist/`](dist/nyyo-n8n-workflows-install-kit.zip). Unzip it.
+2. In a terminal, inside the unzipped folder:
+   - Mac / Linux: `./setup.sh` (add `--postgres` to use Postgres instead of SQLite)
+   - Windows: `powershell -ExecutionPolicy Bypass -File .\setup.ps1`
+3. Open http://localhost:5678, create your owner account: the 3 templates are already there.
+
+Beginner guide with copy-paste steps and troubleshooting: **[INSTALL.md](INSTALL.md)** (Mac first, then Windows and Linux).
+
+## Already have n8n?
+1. Download a JSON file from [`workflows/`](workflows/).
 2. In n8n: **Workflows → Create → ⋯ → Import from File**.
 3. Read the yellow sticky note, fill in the **Config** node, connect your credentials.
-4. Follow the step-by-step guide: **[docs/INSTALL.md](docs/INSTALL.md)**.
+4. Follow the per-template guide: **[docs/INSTALL.md](docs/INSTALL.md)**.
 
 ## What is in this repo
 | Path | Contents |
 |---|---|
+| `INSTALL.md` | One-command install guide for beginners (Docker, Mac / Windows / Linux) |
+| `docker-compose.yml`, `.env.example` | Self-hosted n8n with a persistent volume and optional Postgres (placeholders only) |
+| `setup.sh`, `setup.ps1` | One-command setup: start n8n, import the 3 workflows with the n8n CLI, print next steps |
 | `workflows/` | The three importable templates (clean exports, no credentials, placeholders only) |
 | `docs/INSTALL.md` | Step-by-step install and credential guide |
-| `docs/TESTING.md` | How each template was executed end to end, with results |
+| `docs/TESTING.md` | How each template and the install kit were tested, with results |
+| `docs/kit-test-proof/` | Raw output of the from-scratch install kit test |
 | `docs/screenshots/` | Canvas, successful execution and node output for each template |
 | `sheet-headers/` | One-line CSV header rows to paste into Google Sheets |
 | `test-data/` | Fictional test data: sample leads (curl), 3 invoice PDFs, test email sender |

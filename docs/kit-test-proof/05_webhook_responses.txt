@@ -1,0 +1,9 @@
+== valid lead (JSON)
+{"ok":true,"message":"Thanks, we received your request."}
+HTTP 200
+== invalid lead
+{"ok":false,"errors":["name is required","a valid email is required","message is required"]}
+HTTP 422
+== honeypot (form-encoded)
+{"ok":false,"errors":["rejected as spam"]}
+HTTP 422

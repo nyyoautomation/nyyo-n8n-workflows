@@ -1,0 +1,6 @@
+api.openai.com POST /v1/chat/completions
+sheets.googleapis.com GET /v4/spreadsheets/REPLACE_WITH_YOUR_SPREADSHEET_ID
+sheets.googleapis.com GET /v4/spreadsheets/REPLACE_WITH_YOUR_SPREADSHEET_ID/values/'Leads'
+sheets.googleapis.com POST /v4/spreadsheets/REPLACE_WITH_YOUR_SPREADSHEET_ID:batchUpdate
+sheets.googleapis.com PUT /v4/spreadsheets/REPLACE_WITH_YOUR_SPREADSHEET_ID/values/Leads!2:2
+slack.com POST /api/chat.postMessage
