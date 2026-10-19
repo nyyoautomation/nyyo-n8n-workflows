@@ -1,0 +1,27 @@
+:root{--bg:#0b1220;--panel:#121a2b;--text:#e8eefc;--muted:#9aa8c7;--accent:#5b8cff;--ok:#3dd6c6;--border:#243049;--warn:#f0b429}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif}
+.wrap{max-width:920px;margin:0 auto;padding:24px 16px 48px}
+.hero{background:linear-gradient(145deg,#13203a,#0c1628);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px}
+.tag{display:inline-block;font-size:.75rem;color:var(--ok);background:rgba(61,214,198,.12);border:1px solid rgba(61,214,198,.35);padding:3px 10px;border-radius:999px;margin-bottom:10px}
+.explainer{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px}
+.explainer ol{color:var(--muted);margin:0;padding-left:1.2rem}
+.benefit{margin-top:12px;padding:10px;border-radius:10px;background:rgba(91,140,255,.12);border:1px solid rgba(91,140,255,.3)}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px}
+.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0}
+.step{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:#0e1628;font-size:.85rem;color:var(--muted)}
+.step .dot{width:10px;height:10px;border-radius:50%;background:#334;display:inline-block}
+.step.active{border-color:var(--accent);color:var(--text);box-shadow:0 0 0 1px var(--accent)}
+.step.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.step.done{border-color:var(--ok);color:var(--text)}
+.step.done .dot{background:var(--ok)}
+.arrow{color:var(--muted)}
+.form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px}
+@media(max-width:700px){.form{grid-template-columns:1fr}}
+input,button{border-radius:10px;border:1px solid var(--border);padding:12px;font-size:.95rem}
+input{background:#0b1220;color:var(--text)}
+button{background:var(--accent);color:#fff;border:0;font-weight:600;cursor:pointer}
+.log{max-height:360px;overflow:auto}
+.log-item{margin:10px 0;padding:10px;background:#0e1628;border-radius:10px;border-left:3px solid var(--accent)}
+.log-item pre{margin:8px 0 0;white-space:pre-wrap;color:var(--muted);font-size:.8rem}
+.wf-list a{color:var(--ok);display:block;margin:6px 0}
+.footer{text-align:center;color:var(--muted);font-size:.85rem;margin-top:18px}.footer a{color:var(--ok)}

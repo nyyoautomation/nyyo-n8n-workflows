@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>n8n AI workflow gallery — Nyyo Automation</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <span class="tag">Live simulator · importable n8n JSON · no signup</span>
+      <h1 style="margin:0 0 8px">Leads processed in 30 seconds — no human in the loop</h1>
+      <p style="margin:0;color:#9aa8c7">Form → CRM sheet → AI draft reply → Slack alert. Same pattern for invoices, inbox triage, reviews, price watch.</p>
+      <p style="margin:8px 0 0;font-size:.8rem;color:#9aa8c7">Nyyo Automation · fixed-price · crypto OK</p>
+    </header>
+    <section class="explainer">
+      <h2>What is this? (plain English)</h2>
+      <p style="margin:0 0 8px;color:#9aa8c7">Automation that connects your tools (form, sheet, Slack, email) so repetitive work runs itself — including a light AI step.</p>
+      <ol>
+        <li>Fill the fake lead below and click <strong>Run workflow</strong>.</li>
+        <li>Watch each step light up and see the JSON going in/out.</li>
+        <li>Download a ready-to-import n8n workflow from the list.</li>
+      </ol>
+      <div class="benefit"><strong>Business benefit:</strong> sales gets notified in seconds; no copy-paste into the CRM. Workflows from <strong>$100</strong>, agents from <strong>$500</strong>, maintenance <strong>$150–200/mo</strong>.</div>
+    </section>
+    <div class="panel">
+      <h3 style="margin-top:0">Simulator — lead → CRM → Slack</h3>
+      <div class="form">
+        <input id="email" placeholder="email@demo.co" value="founder@acme.demo" />
+        <input id="company" placeholder="Company" value="Acme Demo" />
+        <input id="budget" placeholder="Budget USD" value="350" />
+        <button id="run" type="button">Run workflow</button>
+      </div>
+      <div class="flow" id="flow"></div>
+      <div class="log" id="log"></div>
+    </div>
+    <div class="panel">
+      <h3 style="margin-top:0">Importable workflows (n8n JSON)</h3>
+      <div class="wf-list">
+        <a href="./workflows/01_lead_to_crm.json">01 — Lead form → CRM → Slack</a>
+        <a href="./workflows/02_invoice_to_sheet.json">02 — Invoice mail → Excel/Sheet</a>
+        <a href="./workflows/03_inbox_triage.json">03 — Support inbox triage</a>
+        <a href="./workflows/04_review_thanks.json">04 — Review → thank-you</a>
+        <a href="./workflows/05_price_watch.json">05 — Competitor price watch</a>
+      </div>
+      <p style="color:#9aa8c7;font-size:.9rem">Import in n8n: Menu → Import from file. Wire your own credentials (Sheets, Slack…). Demo graphs are templates.</p>
+    </div>
+    <p class="footer"><a href="https://laborx.com/freelancers/users/id475124">Hire Nyyo Automation</a> · <a href="https://github.com/nyyoautomation/nyyo-n8n-workflows">Repo</a></p>
+  </div>
+  <script src="./js/sim.js"></script>
+</body>
+</html>

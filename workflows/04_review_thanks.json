@@ -1,0 +1,97 @@
+{
+  "name": "Nyyo \u2014 Review \u2192 thank-you + sheet",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "New review",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "2",
+      "name": "Sentiment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "3",
+      "name": "Log review",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 1,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "4",
+      "name": "Send thank-you",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {}
+    }
+  ],
+  "connections": {
+    "New review": {
+      "main": [
+        [
+          {
+            "node": "Sentiment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sentiment": {
+      "main": [
+        [
+          {
+            "node": "Log review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log review": {
+      "main": [
+        [
+          {
+            "node": "Send thank-you",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "nyyo": "demo"
+  },
+  "tags": [
+    {
+      "name": "Nyyo Automation demo"
+    }
+  ]
+}
