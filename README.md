@@ -4,13 +4,13 @@
 >
 > **What it does:** Connects your tools so a new lead (or invoice, or support mail) is handled automatically — sheet updated, AI draft ready, Slack pinged.
 >
-> **Try it in 1 click:** open the [**live simulator**](https://cdn.jsdelivr.net/gh/nyyoautomation/nyyo-n8n-workflows@main/index.html), click **Run workflow**, watch the steps and JSON.
+> **Try it in 1 click:** open the [**live simulator**](https://nyyoautomation.github.io/nyyo-n8n-workflows/), click **Run workflow**, watch the steps and JSON.
 >
 > **Business benefit:** sales reacts in seconds instead of hours. Workflows from **$100**, agents from **$500**.
 
 ![Demo](docs/demo.gif)
 
-**Live:** https://cdn.jsdelivr.net/gh/nyyoautomation/nyyo-n8n-workflows@main/index.html  
+**Live:** https://nyyoautomation.github.io/nyyo-n8n-workflows/  
 **Brand:** [Nyyo Automation](https://github.com/nyyoautomation)
 
 [![n8n](https://img.shields.io/badge/n8n-workflows-FF6D5A?style=flat)](#)
