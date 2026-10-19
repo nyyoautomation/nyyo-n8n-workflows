@@ -4,7 +4,7 @@
 #   ./setup.sh --postgres    same, with a Postgres database (choose this on the first run)
 #   ./setup.sh --port 5679   use another port on this computer
 # Safe to run again: it never overwrites your .env and skips workflows that are already imported.
-# Guide: INSTALL.md. Contact: LaborX (https://laborx.com/freelancers/users/id475124)
+# Guide: INSTALL.md. Questions? Ask in your order chat.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -144,5 +144,5 @@ Everyday commands (in this folder)
   Stop:   $DC stop          Start again: $DC up -d
   Logs:   $DC logs -f n8n   Update n8n:  change N8N_VERSION in .env, then $DC up -d
 Keep .env private and back it up: it holds the key that protects your saved credentials.
-Help: INSTALL.md (Troubleshooting) · LaborX (https://laborx.com/freelancers/users/id475124)
+Help: INSTALL.md (Troubleshooting) · Questions? Ask in your order chat.
 NEXT

@@ -5,7 +5,7 @@
 
 ==> 2/5 Preparing settings (.env)
     OK  Created .env with a random encryption key (keep this file private, and back it up)
-    OK  Database: SQLite · Time zone: UTC · Address: http://localhost:5678
+    OK  Database: SQLite · Time zone: [auto-detected, redacted] · Address: http://localhost:5678
 
 ==> 3/5 Starting n8n (the first start downloads about 1 GB, allow a few minutes)
  Network nyyo-n8n_default  Creating
@@ -40,4 +40,4 @@ Everyday commands (in this folder)
   Stop:   docker compose stop          Start again: docker compose up -d
   Logs:   docker compose logs -f n8n   Update n8n:  change N8N_VERSION in .env, then docker compose up -d
 Keep .env private and back it up: it holds the key that protects your saved credentials.
-Help: INSTALL.md (Troubleshooting) · LaborX (https://laborx.com/freelancers/users/id475124)
+Help: INSTALL.md (Troubleshooting) · Questions? Ask in your order chat.

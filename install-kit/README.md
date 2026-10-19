@@ -24,4 +24,4 @@ imports the 3 workflows with the n8n CLI and prints the next steps. Safe to run 
 
 Already running n8n? Import the files in `workflows/` with **Workflows → ⋯ → Import from File**, then follow `docs/INSTALL.md`.
 
-Contact: LaborX (https://laborx.com/freelancers/users/id475124)
+Questions? Ask in your order chat.

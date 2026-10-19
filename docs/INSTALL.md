@@ -80,4 +80,4 @@ Use a mailbox dedicated to invoices or support if you can. The trigger marks pro
 | Template 03 replies to robots | Add the sender to the patterns in **Score urgency** (`isAutomated`). |
 
 ## Support
-Nyyo Automation · Remote · Worldwide · LaborX (https://laborx.com/freelancers/users/id475124)
+Nyyo Automation · Remote · Worldwide · Questions? Ask in your order chat.

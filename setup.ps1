@@ -5,7 +5,7 @@
 # If Windows blocks the script, run once:  Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 # or start it with:  powershell -ExecutionPolicy Bypass -File .\setup.ps1
 # Safe to run again: it never overwrites your .env and skips workflows that are already imported.
-# Guide: INSTALL.md. Contact: LaborX (https://laborx.com/freelancers/users/id475124)
+# Guide: INSTALL.md. Questions? Ask in your order chat.
 [CmdletBinding()]
 param(
   [switch]$Postgres,
@@ -159,5 +159,5 @@ Everyday commands (in this folder)
   Stop:   $dcName stop          Start again: $dcName up -d
   Logs:   $dcName logs -f n8n   Update n8n:  change N8N_VERSION in .env, then $dcName up -d
 Keep .env private and back it up: it holds the key that protects your saved credentials.
-Help: INSTALL.md (Troubleshooting) - LaborX (https://laborx.com/freelancers/users/id475124)
+Help: INSTALL.md (Troubleshooting) - Questions? Ask in your order chat.
 "@ | Write-Host

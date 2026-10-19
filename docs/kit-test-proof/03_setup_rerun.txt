@@ -1,7 +1,7 @@
     OK  Docker version 26.1.5+dfsg1, build a72d7cd
     OK  Docker Compose version 2.26.1-4
     OK  Keeping your existing .env
-    OK  Database: SQLite · Time zone: UTC · Address: http://localhost:5678
+    OK  Database: SQLite · Time zone: [auto-detected, redacted] · Address: http://localhost:5678
     OK  n8n is up at http://localhost:5678 (2.43.8)
     OK  Already there: Send website form leads to Google Sheets and Slack with an AI-drafted reply
     OK  Already there: Extract invoice data from email PDF attachments into Google Sheets

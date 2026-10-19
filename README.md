@@ -51,4 +51,4 @@ Beginner guide with copy-paste steps and troubleshooting: **[INSTALL.md](INSTALL
 - Template 03 uses keyword rules, not AI. Tune the keywords and threshold to your inbox.
 
 ## Contact
-Nyyo Automation · Remote · Worldwide · LaborX (https://laborx.com/freelancers/users/id475124)
+Nyyo Automation · Remote · Worldwide · Questions? Ask in your order chat.

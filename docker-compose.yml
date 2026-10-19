@@ -11,7 +11,7 @@
 # Default database: SQLite inside the "n8n_data" volume (fine for one person or a small team).
 # Optional Postgres: run "./setup.sh --postgres" on the FIRST setup (it sets COMPOSE_PROFILES=postgres in .env).
 #
-# Full guide: INSTALL.md. No credentials are stored in this kit. Contact: LaborX (https://laborx.com/freelancers/users/id475124)
+# Full guide: INSTALL.md. No credentials are stored in this kit. Questions? Ask in your order chat.
 
 name: nyyo-n8n
 

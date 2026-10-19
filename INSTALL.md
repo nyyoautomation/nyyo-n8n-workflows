@@ -136,8 +136,8 @@ Switching an existing SQLite install to Postgres does not move your data: export
 | Mac with Apple chip: very slow first start | Normal: Docker downloads the ARM image and n8n runs its database setup once. Later starts take a few seconds. |
 | Template-specific errors (Sheets, Slack, IMAP) | See the troubleshooting table in [docs/INSTALL.md](docs/INSTALL.md). |
 
-Still stuck? Email **LaborX (https://laborx.com/freelancers/users/id475124)** with the output of `docker compose logs --tail 100 n8n`
+Still stuck? Ask in your order chat and paste the output of `docker compose logs --tail 100 n8n`
 (it contains no passwords, but check before sending).
 
 ---
-Nyyo Automation · Remote · Worldwide · LaborX (https://laborx.com/freelancers/users/id475124) · Kit licence: MIT (see LICENSE). n8n itself is licensed by n8n GmbH under its own terms.
+Nyyo Automation · Remote · Worldwide · Questions? Ask in your order chat. · Kit licence: MIT (see LICENSE). n8n itself is licensed by n8n GmbH under its own terms.
