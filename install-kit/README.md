@@ -1,13 +1,13 @@
-# n8n / Make — free install kit
+# Install kit (free)
 
-**Install kit: free, included with every package.**
+The kit contains everything needed to install the three templates yourself:
 
-## Import into n8n
-1. Open n8n → Workflows → Import from File
-2. Pick any JSON in `/workflows/`
-3. Or click **Import** on the demo page (downloads the JSON)
+- `workflows/`: three importable n8n JSON files (no credentials, placeholders only)
+- `docs/INSTALL.md`: step-by-step install and credential guide
+- `docs/TESTING.md`: test report
+- `docs/screenshots/` and `docs/demo.gif`: canvas and successful executions
+- `sheet-headers/`: header rows for Google Sheets
+- `test-data/`: fictional test data and scripts
+- `LICENSE`: MIT
 
-## Make.com
-JSON is n8n-native. Make blueprints for the same flows: **on request (free)** at handover.
-
-No extra fee for any workflow file.
+Import in n8n: **Workflows → ⋯ → Import from File**. Then follow `docs/INSTALL.md`.

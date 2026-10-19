@@ -1,0 +1,467 @@
+{
+  "name": "Triage support emails from IMAP, alert Slack on urgent ones and auto-acknowledge the rest",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Triage support emails from IMAP, alert Slack on urgent ones and auto-acknowledge the rest\n\n### Who's it for\nSmall support teams, founders and agencies who share one support inbox and need urgent messages seen quickly without reading every email.\n\n### How it works\n1. The **Email Trigger (IMAP)** picks up new unread emails from your support mailbox.\n2. A **Code** node scores each email with transparent keyword rules: keywords in the body, extra weight in the subject, shouting subjects and VIP sender domains.\n3. Auto-replies, bounces and no-reply senders are filtered out, so the workflow never answers a robot or starts a mail loop.\n4. Emails at or above the urgency threshold are posted to a **Slack** channel with the matched keywords and a preview.\n5. All other emails get a polite acknowledgement through **Send Email (SMTP)**.\n6. Every email is logged to **Google Sheets** with its priority and the action taken.\n\n### Setup\n1. Open the **Config** node: set your keywords, threshold, VIP domains, Slack channel, sender address, company name and spreadsheet ID.\n2. Create a sheet tab with this header row: `received_at, from, subject, priority, matched_keywords, action`.\n3. Connect your IMAP, SMTP, Slack and Google Sheets credentials.\n4. Send yourself a test email, then activate the workflow.\n\n### Requirements\nn8n (Cloud or self-hosted), a mailbox with IMAP and SMTP access, a Slack workspace and a Google account. No AI key is needed.\n\n### Customization tips\nTune the keyword list and threshold in **Config**, route billing emails to another channel, or swap the rules for an AI text classifier.\n\nQuestions: LaborX (https://laborx.com/freelancers/users/id475124)",
+        "height": 840,
+        "width": 620
+      },
+      "id": "758ce38b-32cb-a807-e0ed-87f50d9adee4",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 1. Receive and score\nNew emails are scored with keyword rules. Auto-replies and no-reply senders are dropped to prevent mail loops.",
+        "height": 640,
+        "width": 920,
+        "color": 7
+      },
+      "id": "9e483b3a-3b71-f152-865f-ca3a67bba4e9",
+      "name": "Section: receive and score",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. Route by priority\nUrgent: Slack alert for the on-call person. Normal: automatic acknowledgement to the sender.",
+        "height": 640,
+        "width": 520,
+        "color": 7
+      },
+      "id": "434a87fe-823a-6316-188a-9b9dfa12faec",
+      "name": "Section: route",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. Log every email\nOne row per email in Google Sheets with priority and action taken.",
+        "height": 640,
+        "width": 500,
+        "color": 7
+      },
+      "id": "36317ae4-ea7c-3485-d63f-0e64fb3680ef",
+      "name": "Section: log",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        -340
+      ]
+    },
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "postProcessAction": "read",
+        "format": "resolved",
+        "dataPropertyAttachmentsPrefixName": "attachment_",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "id": "625bd830-16aa-7888-6d49-89bbe3d38f8a",
+      "name": "Watch support inbox",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8e1eb66-2e0a-a1ba-af1c-1c22f2dfe29b",
+              "name": "urgentKeywords",
+              "value": "urgent, asap, emergency, outage, down, not working, broken, cannot log in, can't log in, locked out, payment failed, charged twice, refund, cancel, security, breach, data loss, legal",
+              "type": "string"
+            },
+            {
+              "id": "7a595c7d-7196-822a-6245-0c7636fb29cf",
+              "name": "urgencyThreshold",
+              "value": 2,
+              "type": "number"
+            },
+            {
+              "id": "0ccdaeb2-5f6d-4ed3-c538-4bab4c81212c",
+              "name": "vipDomains",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "64331ed0-a59c-3b84-e34b-875f0a342b8c",
+              "name": "slackChannel",
+              "value": "#support-urgent",
+              "type": "string"
+            },
+            {
+              "id": "71b8b0c8-98cd-180e-28ec-2ed1a24c0b49",
+              "name": "ackFromEmail",
+              "value": "support@example.com",
+              "type": "string"
+            },
+            {
+              "id": "db486e4c-df8b-2048-591e-59f683319c4c",
+              "name": "companyName",
+              "value": "Your Company",
+              "type": "string"
+            },
+            {
+              "id": "819ba710-a2ca-d6c3-4e9e-700ae343f951",
+              "name": "spreadsheetId",
+              "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "5876465d-3e26-30bd-ba6a-f5468e9c8ae0",
+              "name": "sheetName",
+              "value": "Support log",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "5a7d4a7a-d06c-c0b0-2017-c56eaf4d1ed5",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Transparent, rule-based urgency scoring. Edit keywords and weights in the Config node.\nconst cfg = $('Config').first().json;\nconst list = (s) => String(s || '').split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);\nconst keywords = list(cfg.urgentKeywords);\nconst vipDomains = list(cfg.vipDomains);\nconst threshold = Number(cfg.urgencyThreshold) || 2;\n\nreturn $('Watch support inbox').all().map((email) => {\n  const j = email.json;\n  const sender = j.from?.value?.[0] || {};\n  const from = String(sender.address || '').toLowerCase();\n  const fromName = sender.name || from.split('@')[0] || 'there';\n  const subject = String(j.subject || '').trim();\n  const body = String(j.text || '').slice(0, 8000);\n  const subjectLc = subject.toLowerCase();\n  const bodyLc = body.toLowerCase();\n\n  const has = (text, k) => new RegExp(`(^|[^a-z0-9])${k.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}([^a-z0-9]|$)`).test(text);\n  const inBody = keywords.filter((k) => has(bodyLc, k));\n  const inSubject = keywords.filter((k) => has(subjectLc, k));\n  const matched = [...new Set([...inSubject, ...inBody])];\n\n  let score = inBody.length + inSubject.length * 2;\n  const reasons = [];\n  if (/!{2,}/.test(subject) || (subject.length > 8 && subject === subject.toUpperCase() && /[A-Z]/.test(subject))) { score += 1; reasons.push('shouting subject'); }\n  const domain = from.split('@')[1] || '';\n  if (vipDomains.includes(domain)) { score += 2; reasons.push('VIP domain'); }\n\n  const headers = j.headers || {};\n  const headerText = JSON.stringify(headers).toLowerCase();\n  const isAutomated = /(^|[._-])(no-?reply|do-?not-?reply|mailer-daemon|postmaster|bounce)/.test(from)\n    || /^(auto(matic)?[ -]?reply|out of (the )?office|undeliverable|delivery status notification)/i.test(subject)\n    || /auto-submitted\"?:\\s*\"?auto-(replied|generated)|precedence\"?:\\s*\"?(bulk|junk|list)/.test(headerText);\n\n  return {\n    json: {\n      received_at: new Date(j.date || Date.now()).toISOString(),\n      from,\n      from_name: fromName,\n      first_name: String(fromName).split(/\\s+/)[0],\n      subject: subject || '(no subject)',\n      preview: body.replace(/\\s+/g, ' ').trim().slice(0, 280),\n      score,\n      priority: score >= threshold ? 'urgent' : 'normal',\n      matched_keywords: matched.join(', '),\n      reasons: reasons.join(', '),\n      is_automated: isAutomated,\n    },\n  };\n});"
+      },
+      "id": "0758532f-d818-00fc-61be-49dcfb44d295",
+      "name": "Score urgency",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.is_automated }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "ae3dc477-0f68-07e5-9854-bcf1f7656d52",
+      "name": "Skip auto-replies and no-reply senders",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.priority }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "rightValue": "urgent"
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "bf8fd762-f1cf-d8f4-33b1-b2baf5917f86",
+      "name": "Is urgent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        940,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.slackChannel }}",
+          "mode": "name"
+        },
+        "text": "=:rotating_light: *Urgent support email* (score {{ $json.score }})\n*From:* {{ $json.from_name }} <{{ $json.from }}>\n*Subject:* {{ $json.subject }}\n*Matched:* {{ $json.matched_keywords || 'none' }}{{ $json.reasons ? ' | ' + $json.reasons : '' }}\n>{{ $json.preview }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "d065f487-d22a-3ddc-8bb6-e76e3c9badd7",
+      "name": "Alert urgent channel in Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1180,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "={{ $('Config').first().json.ackFromEmail }}",
+        "toEmail": "={{ $json.from }}",
+        "subject": "=Re: {{ $json.subject }}",
+        "emailFormat": "text",
+        "text": "=Hi {{ $json.first_name }},\n\nThanks for contacting {{ $('Config').first().json.companyName }}. This is an automatic confirmation that we received your message \"{{ $json.subject }}\".\n\nA member of the team will reply as soon as possible. There is no need to send it again. If you have more details, just reply to this email.\n\nBest regards,\n{{ $('Config').first().json.companyName }} support",
+        "options": {
+          "appendAttribution": false,
+          "replyTo": "={{ $('Config').first().json.ackFromEmail }}"
+        }
+      },
+      "id": "e2150d69-eb25-5e1b-a9f8-86137d611b74",
+      "name": "Send acknowledgement email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1180,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d2e1fcb-9d9b-df6a-8829-b08ae421faaa",
+              "name": "received_at",
+              "value": "={{ $('Score urgency').item.json.received_at }}",
+              "type": "string"
+            },
+            {
+              "id": "d98a07f8-4921-b24e-e30f-86fd8cd85c3c",
+              "name": "from",
+              "value": "={{ $('Score urgency').item.json.from }}",
+              "type": "string"
+            },
+            {
+              "id": "b5e3374e-43f6-5448-52f7-751dfc529100",
+              "name": "subject",
+              "value": "={{ $('Score urgency').item.json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "b988295c-2680-25b4-9dfb-3df26171ddc3",
+              "name": "priority",
+              "value": "={{ $('Score urgency').item.json.priority }}",
+              "type": "string"
+            },
+            {
+              "id": "216a7dfc-3bf0-26b8-f302-e5d804a9cace",
+              "name": "matched_keywords",
+              "value": "={{ $('Score urgency').item.json.matched_keywords }}",
+              "type": "string"
+            },
+            {
+              "id": "418c5509-e217-1d55-b0ae-e5c2ea4442b5",
+              "name": "action",
+              "value": "={{ $('Score urgency').item.json.priority === 'urgent' ? 'Slack alert sent' : 'Acknowledgement sent' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "bad8438a-bdb5-5f56-8987-fe7a5c333f6b",
+      "name": "Prepare log row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.sheetName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "b8e471fd-c61d-cf32-d33e-cedfbf82dd63",
+      "name": "Log email to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1720,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Watch support inbox": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Score urgency",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score urgency": {
+      "main": [
+        [
+          {
+            "node": "Skip auto-replies and no-reply senders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip auto-replies and no-reply senders": {
+      "main": [
+        [
+          {
+            "node": "Is urgent?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is urgent?": {
+      "main": [
+        [
+          {
+            "node": "Alert urgent channel in Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send acknowledgement email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert urgent channel in Slack": {
+      "main": [
+        [
+          {
+            "node": "Prepare log row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send acknowledgement email": {
+      "main": [
+        [
+          {
+            "node": "Prepare log row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare log row": {
+      "main": [
+        [
+          {
+            "node": "Log email to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

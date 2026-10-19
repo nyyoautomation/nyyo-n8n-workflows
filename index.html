@@ -75,13 +75,11 @@
     <div class="panel">
       <h3 style="margin-top:0">Importable workflows (n8n JSON)</h3>
       <div class="wf-list">
-        <a href="./workflows/01_lead_to_crm.json">01 — Lead form → CRM → Slack</a>
-        <a href="./workflows/02_invoice_to_sheet.json">02 — Invoice mail → Excel/Sheet</a>
-        <a href="./workflows/03_inbox_triage.json">03 — Support inbox triage</a>
-        <a href="./workflows/04_review_thanks.json">04 — Review → thank-you</a>
-        <a href="./workflows/05_price_watch.json">05 — Competitor price watch</a>
+        <a href="./workflows/01_lead_to_sheets_slack_ai.json">01 — Website form leads → Google Sheets + Slack, with an AI-drafted reply</a>
+        <a href="./workflows/02_invoice_email_pdf_to_sheets.json">02 — Invoice PDFs from email → Google Sheets row</a>
+        <a href="./workflows/03_support_inbox_triage_slack.json">03 — Support inbox triage → Slack alert or auto-acknowledgement</a>
       </div>
-      <p style="color:#9aa8c7;font-size:.9rem">Import in n8n: Menu → Import from file. Wire your own credentials (Sheets, Slack…). Demo graphs are templates.</p>
+      <p style="color:#9aa8c7;font-size:.9rem">Import in n8n: Workflows → ⋯ → Import from File, then follow the yellow sticky note and the <a href="https://github.com/nyyoautomation/nyyo-n8n-workflows/blob/main/docs/INSTALL.md">install guide</a>. Tested end to end on self-hosted n8n 2.43.8. No credentials included.</p>
     </div>
     <section class="metrics" aria-label="Example metrics">
 <div class="metric"><div class="v">Webhook</div><div class="l"><strong>Trigger</strong> · lead to Slack alert</div></div>
@@ -141,14 +139,13 @@
     <p class="sub">Download JSON and use n8n → Import from File. Make.com blueprints on request (free). Install kit: free, included with every package — no add-on fee.</p>
     <div class="kit-actions">
       <a class="primary" href="./dist/nyyo-n8n-workflows-install-kit.zip" download rel="noopener">All workflows ZIP</a>
-<a class="" href="./workflows/01_lead_to_crm.json" download rel="noopener">Import 01_lead_to_crm</a>
-<a class="" href="./workflows/02_invoice_to_sheet.json" download rel="noopener">Import 02_invoice_to_sheet</a>
-<a class="" href="./workflows/03_inbox_triage.json" download rel="noopener">Import 03_inbox_triage</a>
-<a class="" href="./workflows/04_review_thanks.json" download rel="noopener">Import 04_review_thanks</a>
-<a class="" href="./workflows/05_price_watch.json" download rel="noopener">Import 05_price_watch</a>
+<a class="" href="./workflows/01_lead_to_sheets_slack_ai.json" download rel="noopener">Import 01 · Leads → Sheets + Slack + AI draft</a>
+<a class="" href="./workflows/02_invoice_email_pdf_to_sheets.json" download rel="noopener">Import 02 · Invoice PDFs → Sheets</a>
+<a class="" href="./workflows/03_support_inbox_triage_slack.json" download rel="noopener">Import 03 · Support inbox triage</a>
     </div>
     <ul class="kit-list">
-      <li><span class="ready">●</span> 5 importable n8n workflow JSON files</li>
+      <li><span class="ready">●</span> 3 tested n8n workflow JSON files with setup sticky notes</li>
+<li><span class="ready">●</span> Step-by-step install guide, Google Sheets header rows, fictional test data</li>
 <li><span class="ready">●</span> One-click download / Import buttons</li>
 <li><span class="soon">●</span> Make.com blueprints — on request (free)</li>
     </ul>

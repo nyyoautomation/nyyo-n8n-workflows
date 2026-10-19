@@ -1,27 +1,23 @@
-[
-  {
-    "file": "01_lead_to_crm.json",
-    "path": "workflows/01_lead_to_crm.json",
-    "title": "01 lead to crm"
-  },
-  {
-    "file": "02_invoice_to_sheet.json",
-    "path": "workflows/02_invoice_to_sheet.json",
-    "title": "02 invoice to sheet"
-  },
-  {
-    "file": "03_inbox_triage.json",
-    "path": "workflows/03_inbox_triage.json",
-    "title": "03 inbox triage"
-  },
-  {
-    "file": "04_review_thanks.json",
-    "path": "workflows/04_review_thanks.json",
-    "title": "04 review thanks"
-  },
-  {
-    "file": "05_price_watch.json",
-    "path": "workflows/05_price_watch.json",
-    "title": "05 price watch"
-  }
-]
+{
+  "name": "Nyyo Automation n8n templates",
+  "version": "1.0.0",
+  "tested_on": "n8n 2.43.8 self-hosted",
+  "license": "MIT",
+  "workflows": [
+    {
+      "file": "01_lead_to_sheets_slack_ai.json",
+      "path": "workflows/01_lead_to_sheets_slack_ai.json",
+      "title": "Send website form leads to Google Sheets and Slack with an AI-drafted reply"
+    },
+    {
+      "file": "02_invoice_email_pdf_to_sheets.json",
+      "path": "workflows/02_invoice_email_pdf_to_sheets.json",
+      "title": "Extract invoice data from email PDF attachments into Google Sheets"
+    },
+    {
+      "file": "03_support_inbox_triage_slack.json",
+      "path": "workflows/03_support_inbox_triage_slack.json",
+      "title": "Triage support emails from IMAP, alert Slack on urgent ones and auto-acknowledge the rest"
+    }
+  ]
+}

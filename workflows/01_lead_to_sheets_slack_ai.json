@@ -1,0 +1,483 @@
+{
+  "name": "Send website form leads to Google Sheets and Slack with an AI-drafted reply",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Send website form leads to Google Sheets and Slack with an AI-drafted reply\n\n### Who's it for\nSmall sales teams and freelancers who get leads from a website form and want each one logged, shared and answered quickly.\n\n### How it works\n1. A **Webhook** receives the form submission (name, email, company, message, source).\n2. A **Code** node cleans the fields, validates the email and rejects bots that fill a hidden honeypot field.\n3. Invalid submissions get a `422` response listing the errors.\n4. For valid leads, an **OpenAI** chat model drafts a short first reply for a human to review. Nothing is sent automatically.\n5. The lead and the draft are appended to a **Google Sheets** tab that acts as a simple CRM.\n6. **Slack** posts the lead and the suggested reply to your sales channel, and the form gets a `200` response.\n\n### Setup\n1. Open the **Config** node and fill in your spreadsheet ID, sheet name, Slack channel, company name and reply tone.\n2. Create a sheet tab with this header row: `received_at, name, email, company, message, source, ai_reply_draft`.\n3. Connect your Google Sheets, Slack and OpenAI credentials on the matching nodes.\n4. Activate the workflow and point your form tool to the **production URL** of the webhook (POST, JSON or form-encoded).\n\n### Requirements\nn8n (Cloud or self-hosted), a Google account, a Slack workspace with a bot that can post in the channel, and an OpenAI API key (usage is billed by OpenAI).\n\n### Customization tips\nSwap OpenAI for Anthropic, Gemini or a local Ollama model, edit the prompt in **Draft reply with AI**, or replace Google Sheets with your CRM.\n\nQuestions: LaborX (https://laborx.com/freelancers/users/id475124)",
+        "height": 880,
+        "width": 620
+      },
+      "id": "b75f98ec-9c1d-c9db-525c-3f58dd0ff644",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 1. Receive and validate\nThe webhook accepts the form post. Fields are cleaned, the email is checked and honeypot spam is rejected with a 422.",
+        "height": 680,
+        "width": 980,
+        "color": 7
+      },
+      "id": "f7122f2e-f42a-6cb7-a626-e0c1fbe3a745",
+      "name": "Section: receive and validate",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. Draft a reply and log the lead\nAn AI model drafts a reply for a human to review. The lead and the draft go to Google Sheets.",
+        "height": 680,
+        "width": 760,
+        "color": 7
+      },
+      "id": "15420c53-1497-7b4e-5528-e371787c163e",
+      "name": "Section: draft and log",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        940,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. Notify the team\nSlack gets the lead and the draft, then the form gets a 200 response.",
+        "height": 680,
+        "width": 480,
+        "color": 7
+      },
+      "id": "3b5e0f0f-4657-7eea-2eef-9a260366361e",
+      "name": "Section: notify",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-intake",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "cd9e68e7-b508-c867-17fa-6dec0b53fedb",
+      "name": "Receive form lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "06850dbd-7c31-5369-68ea-76850b383e88"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "819ba710-a2ca-d6c3-4e9e-700ae343f951",
+              "name": "spreadsheetId",
+              "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "5876465d-3e26-30bd-ba6a-f5468e9c8ae0",
+              "name": "sheetName",
+              "value": "Leads",
+              "type": "string"
+            },
+            {
+              "id": "64331ed0-a59c-3b84-e34b-875f0a342b8c",
+              "name": "slackChannel",
+              "value": "#sales",
+              "type": "string"
+            },
+            {
+              "id": "db486e4c-df8b-2048-591e-59f683319c4c",
+              "name": "companyName",
+              "value": "Your Company",
+              "type": "string"
+            },
+            {
+              "id": "68142e80-6de3-ccb7-6516-7112b1d07d81",
+              "name": "senderName",
+              "value": "The Your Company team",
+              "type": "string"
+            },
+            {
+              "id": "681d22d9-6c9c-b5db-9f31-b29dc0c581d5",
+              "name": "replyTone",
+              "value": "friendly, concise and professional",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "84b45b1b-5ade-7503-dbe7-01c4cd6dbaac",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        200,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Clean and validate every incoming form submission.\n// Accepts JSON or form-encoded bodies and a few common field aliases.\nconst clean = (v) => (v === undefined || v === null ? '' : String(v)).trim().replace(/\\s+/g, ' ');\n\nreturn $('Receive form lead').all().map((item) => {\n  const raw = item.json.body ?? item.json;\n  const fullName = clean(raw.name || raw.full_name || `${raw.first_name ?? ''} ${raw.last_name ?? ''}`);\n  const lead = {\n    received_at: new Date().toISOString(),\n    name: fullName,\n    email: clean(raw.email).toLowerCase(),\n    company: clean(raw.company || raw.organization),\n    message: String(raw.message ?? raw.comments ?? '').trim().slice(0, 4000),\n    source: clean(raw.source || raw.utm_source) || 'website',\n  };\n\n  const errors = [];\n  if (!lead.name) errors.push('name is required');\n  if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(lead.email)) errors.push('a valid email is required');\n  if (!lead.message) errors.push('message is required');\n  // Honeypot: keep a hidden \"website_hp\" field in your form. Humans leave it empty, bots fill it.\n  if (clean(raw.website_hp)) errors.push('rejected as spam');\n\n  return { json: { ...lead, is_valid: errors.length === 0, errors } };\n});"
+      },
+      "id": "be57852c-35ec-d992-a3b4-98ce709e9417",
+      "name": "Normalize and validate lead",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.is_valid }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "2893dc2d-eb0a-49ae-ef7c-733369e64e1f",
+      "name": "Lead is valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        620,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, errors: $json.errors } }}",
+        "options": {
+          "responseCode": 422
+        }
+      },
+      "id": "d4893f6e-3e8c-0d0f-d894-700d10c95058",
+      "name": "Respond: invalid lead",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        820,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a short first reply (maximum 120 words) to this inbound lead on behalf of {{ $('Config').first().json.companyName }}.\nTone: {{ $('Config').first().json.replyTone }}.\nRules: answer in the language of the message, do not promise prices, dates or anything that is not in the message, end with one question that moves the conversation forward, sign as {{ $('Config').first().json.senderName }}.\n\nName: {{ $json.name }}\nCompany: {{ $json.company }}\nMessage: {{ $json.message }}",
+        "batching": {}
+      },
+      "id": "8f099d12-1d28-bc15-3a23-58522d328c10",
+      "name": "Draft reply with AI",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1000,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {
+          "temperature": 0.4,
+          "maxTokens": 300
+        }
+      },
+      "id": "7438cc67-d2eb-31aa-80af-32b59ee03648",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1000,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6d2e1fcb-9d9b-df6a-8829-b08ae421faaa",
+              "name": "received_at",
+              "value": "={{ $('Normalize and validate lead').item.json.received_at }}",
+              "type": "string"
+            },
+            {
+              "id": "b068931c-c450-442b-63f5-b3d276ea4297",
+              "name": "name",
+              "value": "={{ $('Normalize and validate lead').item.json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "0c83f57c-786a-0b4a-39ef-ab23731c7ebc",
+              "name": "email",
+              "value": "={{ $('Normalize and validate lead').item.json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "93c731f1-c3a8-4ef0-5cd5-4d044c379eaa",
+              "name": "company",
+              "value": "={{ $('Normalize and validate lead').item.json.company }}",
+              "type": "string"
+            },
+            {
+              "id": "78e73102-7d8f-d50e-d642-340b7c9a63b3",
+              "name": "message",
+              "value": "={{ $('Normalize and validate lead').item.json.message }}",
+              "type": "string"
+            },
+            {
+              "id": "36cd38f4-9b9a-fa08-222c-0dc9ebfe35eb",
+              "name": "source",
+              "value": "={{ $('Normalize and validate lead').item.json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "8a7b69ec-7698-0c5d-89a9-7a2d8d476ce7",
+              "name": "ai_reply_draft",
+              "value": "={{ $json.text.trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "id": "f3f4f290-438f-e177-502a-fe0d341dff14",
+      "name": "Prepare sheet row",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1300,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.sheetName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3d606726-a852-e2fe-d8c1-fec0e3f828a0",
+      "name": "Append lead to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1520,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.slackChannel }}",
+          "mode": "name"
+        },
+        "text": "=:incoming_envelope: *New lead* from {{ $('Prepare sheet row').item.json.name }}{{ $('Prepare sheet row').item.json.company ? ' (' + $('Prepare sheet row').item.json.company + ')' : '' }}\n*Email:* {{ $('Prepare sheet row').item.json.email }}\n*Source:* {{ $('Prepare sheet row').item.json.source }}\n*Message:*\n>{{ $('Prepare sheet row').item.json.message.replace(/\\n/g, '\\n>') }}\n\n*Suggested reply (review before sending):*\n{{ $('Prepare sheet row').item.json.ai_reply_draft }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "c4db2bb7-2a41-8e1d-efe7-788b9310779f",
+      "name": "Notify sales channel in Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        1780,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: true, message: 'Thanks, we received your request.' } }}",
+        "options": {}
+      },
+      "id": "7971e28f-9aa8-0918-4d30-d359da6f4800",
+      "name": "Respond: lead accepted",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2000,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Receive form lead": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Normalize and validate lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize and validate lead": {
+      "main": [
+        [
+          {
+            "node": "Lead is valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead is valid?": {
+      "main": [
+        [
+          {
+            "node": "Draft reply with AI",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond: invalid lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Draft reply with AI",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft reply with AI": {
+      "main": [
+        [
+          {
+            "node": "Prepare sheet row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare sheet row": {
+      "main": [
+        [
+          {
+            "node": "Append lead to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append lead to Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Notify sales channel in Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify sales channel in Slack": {
+      "main": [
+        [
+          {
+            "node": "Respond: lead accepted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

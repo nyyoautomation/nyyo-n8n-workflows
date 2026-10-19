@@ -1,0 +1,274 @@
+{
+  "name": "Extract invoice data from email PDF attachments into Google Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Extract invoice data from email PDF attachments into Google Sheets\n\n### Who's it for\nFreelancers, small businesses and bookkeepers who receive supplier invoices by email and copy the key fields into a spreadsheet by hand.\n\n### How it works\n1. The **Email Trigger (IMAP)** watches a mailbox (Gmail, Outlook, Fastmail or any IMAP server) for unread emails.\n2. A **Code** node keeps only PDF attachments, optionally from allowed sender domains, and creates one item per PDF.\n3. **Extract from File** reads the text layer of each PDF.\n4. A second **Code** node finds the vendor, invoice number, invoice date, due date, currency and total with layout-tolerant rules (US and European number formats). Rows with a missing field are marked `needs review`.\n5. Each invoice is appended as one row to **Google Sheets**.\n\n### Setup\n1. Open the **Config** node: set your spreadsheet ID, sheet name, default currency and, if you want, a comma-separated list of allowed sender domains.\n2. Create a sheet tab with this header row: `received_at, from, subject, file_name, vendor, invoice_number, invoice_date, due_date, currency, total, status`.\n3. Connect your IMAP and Google Sheets credentials. For Gmail, use an app password.\n4. Activate the workflow.\n\n### Requirements\nn8n (Cloud or self-hosted), an IMAP mailbox and a Google account. PDFs need a text layer. Scanned images need an OCR step first.\n\n### Customization tips\nAdd patterns for your suppliers in **Parse invoice fields**, send `needs review` rows to Slack, or replace the parser with an AI extraction node.\n\nQuestions: LaborX (https://laborx.com/freelancers/users/id475124)",
+        "height": 820,
+        "width": 620
+      },
+      "id": "5105fc01-83d9-ca17-b6bf-b9f79075ec95",
+      "name": "Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 1. Receive invoice emails\nNew unread emails arrive from your mailbox. Only PDF attachments are kept, one item per file.",
+        "height": 560,
+        "width": 700,
+        "color": 7
+      },
+      "id": "dd3e9afe-95b4-88a3-2505-3c3f77b4af15",
+      "name": "Section: receive",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 2. Read and parse the PDF\nThe text layer is extracted, then vendor, number, dates, currency and total are detected.",
+        "height": 560,
+        "width": 460,
+        "color": 7
+      },
+      "id": "58a936e3-1df6-ed2b-21cc-97910ee3868a",
+      "name": "Section: extract",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        660,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 3. Log to Google Sheets\nOne row per invoice. Incomplete rows are flagged for review.",
+        "height": 560,
+        "width": 300,
+        "color": 7
+      },
+      "id": "18977fb3-7766-0f67-131b-645a93a66db3",
+      "name": "Section: log",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        -300
+      ]
+    },
+    {
+      "parameters": {
+        "mailbox": "INBOX",
+        "postProcessAction": "read",
+        "format": "resolved",
+        "dataPropertyAttachmentsPrefixName": "attachment_",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "id": "89028207-5246-3599-1f51-9847b405a02d",
+      "name": "Watch invoice inbox",
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            {
+              "id": "819ba710-a2ca-d6c3-4e9e-700ae343f951",
+              "name": "spreadsheetId",
+              "value": "REPLACE_WITH_YOUR_SPREADSHEET_ID",
+              "type": "string"
+            },
+            {
+              "id": "5876465d-3e26-30bd-ba6a-f5468e9c8ae0",
+              "name": "sheetName",
+              "value": "Invoices",
+              "type": "string"
+            },
+            {
+              "id": "e7f82a9e-3265-341d-8949-9a8a0efaa995",
+              "name": "defaultCurrency",
+              "value": "USD",
+              "type": "string"
+            },
+            {
+              "id": "444366a9-70e8-37ac-7d2e-1b24c1bc819e",
+              "name": "allowedSenderDomains",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "238a9d70-14e8-fc90-c8b5-169a51c1fd7a",
+              "name": "usDates",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {
+          "includeBinary": true
+        }
+      },
+      "id": "38110166-fcf0-641c-82be-0f95f48e0b6f",
+      "name": "Config",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One output item per PDF attachment, with the email context attached.\nconst cfg = $('Config').first().json;\nconst allowed = String(cfg.allowedSenderDomains || '')\n  .split(',').map((d) => d.trim().toLowerCase()).filter(Boolean);\n\nconst out = [];\nfor (const email of $('Watch invoice inbox').all()) {\n  const from = email.json.from?.value?.[0]?.address || email.json.from?.text || '';\n  const domain = (from.split('@')[1] || '').toLowerCase();\n  if (allowed.length && !allowed.includes(domain)) continue;\n\n  for (const [key, file] of Object.entries(email.binary || {})) {\n    const isPdf = /pdf/i.test(file.mimeType || '') || /\\.pdf$/i.test(file.fileName || '');\n    if (!isPdf) continue;\n    out.push({\n      json: {\n        received_at: new Date(email.json.date || Date.now()).toISOString(),\n        from,\n        subject: email.json.subject || '',\n        file_name: file.fileName || key,\n      },\n      binary: { data: file },\n    });\n  }\n}\nreturn out;"
+      },
+      "id": "3c912ce2-84ed-416c-4dd6-681ae3264a86",
+      "name": "Collect PDF attachments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "data",
+        "options": {
+          "joinPages": true
+        }
+      },
+      "id": "4854e24e-ee93-46e2-06b9-b1f822a088ea",
+      "name": "Extract text from PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Layout-tolerant invoice field extraction from the PDF text layer.\nconst cfg = $('Config').first().json;\nconst meta = $('Collect PDF attachments').all();\nconst SYMBOLS = { '$': 'USD', '€': 'EUR', '£': 'GBP', '¥': 'JPY', '₹': 'INR' };\nconst MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };\nconst pad = (n) => String(n).padStart(2, '0');\n\nfunction toNumber(raw) {\n  if (!raw) return null;\n  let s = raw.replace(/[\\s\\u00a0']/g, '');\n  const lastComma = s.lastIndexOf(','), lastDot = s.lastIndexOf('.');\n  if (lastComma > lastDot) s = s.replace(/\\./g, '').replace(',', '.');   // 1.234,56\n  else s = s.replace(/,/g, '');                                           // 1,234.56\n  const n = Number(s);\n  return Number.isFinite(n) ? Math.round(n * 100) / 100 : null;\n}\n\nfunction toIsoDate(raw) {\n  if (!raw) return '';\n  let m = raw.match(/(\\d{4})[-\\/.](\\d{1,2})[-\\/.](\\d{1,2})/);\n  if (m) return `${m[1]}-${pad(m[2])}-${pad(m[3])}`;\n  m = raw.match(/(\\d{1,2})[-\\/.](\\d{1,2})[-\\/.](\\d{2,4})/);\n  if (m) {\n    let [a, b, y] = [Number(m[1]), Number(m[2]), Number(m[3])];\n    if (y < 100) y += 2000;\n    // Day-first unless that is impossible; set \"usDates\" in Config to prefer month-first.\n    let day = a, month = b;\n    if (cfg.usDates === true) { day = b; month = a; }\n    if (month > 12) { [day, month] = [month, day]; }\n    return `${y}-${pad(month)}-${pad(day)}`;\n  }\n  m = raw.match(/([A-Za-z]{3,9})\\.?\\s+(\\d{1,2}),?\\s+(\\d{4})/);\n  if (m && MONTHS[m[1].slice(0, 3).toLowerCase()]) return `${m[3]}-${pad(MONTHS[m[1].slice(0, 3).toLowerCase()])}-${pad(m[2])}`;\n  m = raw.match(/(\\d{1,2})\\s+([A-Za-z]{3,9})\\.?\\s+(\\d{4})/);\n  if (m && MONTHS[m[2].slice(0, 3).toLowerCase()]) return `${m[3]}-${pad(MONTHS[m[2].slice(0, 3).toLowerCase()])}-${pad(m[1])}`;\n  return '';\n}\n\nconst DATE = String.raw`(\\d{4}[-\\/.]\\d{1,2}[-\\/.]\\d{1,2}|\\d{1,2}[-\\/.]\\d{1,2}[-\\/.]\\d{2,4}|[A-Za-z]{3,9}\\.?\\s+\\d{1,2},?\\s+\\d{4}|\\d{1,2}\\s+[A-Za-z]{3,9}\\.?\\s+\\d{4})`;\nconst AMOUNT = String.raw`([A-Z]{3}|[$€£¥₹])?\\s*(-?\\d{1,3}(?:[\\s.,'\\u00a0]\\d{3})*(?:[.,]\\d{1,2})?|-?\\d+(?:[.,]\\d{1,2})?)\\s*([A-Z]{3}|[$€£¥₹])?`;\n\nreturn $input.all().map((item, i) => {\n  const src = meta[i]?.json || {};\n  const text = String(item.json.text || '').replace(/\\r/g, '');\n  const lines = text.split('\\n').map((l) => l.trim()).filter(Boolean);\n  const find = (re) => { const m = text.match(re); return m ? m[1].trim() : ''; };\n\n  const invoice_number = find(/invoice\\s*(?:no\\.?|number|num\\.?|#|id)\\s*[:#.]?\\s*([A-Z0-9][A-Z0-9\\-\\/_.]{1,30})/i)\n    || find(/\\b(INV[-_\\/]?[A-Z0-9\\-\\/]{2,})/i);\n  const invoice_date = toIsoDate(find(new RegExp(String.raw`(?:invoice\\s+date|date\\s+of\\s+issue|issue\\s+date|issued(?:\\s+on)?|date)\\s*[:\\-]?\\s*` + DATE, 'i')));\n  const due_date = toIsoDate(find(new RegExp(String.raw`(?:due\\s+date|payment\\s+due|due\\s+by|due)\\s*[:\\-]?\\s*` + DATE, 'i')));\n\n  // Prefer the most specific total label, else the last \"Total\" line that is not a subtotal.\n  let total = null, currency = '';\n  const labels = [/(?:total\\s+due|amount\\s+due|balance\\s+due|grand\\s+total|total\\s+to\\s+pay|amount\\s+payable)/i, /\\btotal(?:\\s*\\((?:incl\\.?|including)[^)\\n]*\\))?/i];\n  for (const label of labels) {\n    const hits = lines.filter((l) => label.test(l) && /\\d/.test(l) && !/sub[\\s-]?total|tax\\s+total|vat\\s+total/i.test(l));\n    if (!hits.length) continue;\n    const m = hits[hits.length - 1].replace(label, ' ').match(new RegExp(AMOUNT));\n    if (m) { total = toNumber(m[2]); const cur = m[1] || m[3] || ''; currency = SYMBOLS[cur] || cur; break; }\n  }\n  if (!currency) {\n    const iso = text.match(/\\b(USD|EUR|GBP|CAD|AUD|CHF|JPY|INR|SGD|NZD)\\b/);\n    const sym = text.match(/[$€£¥₹]/);\n    currency = iso ? iso[1] : sym ? SYMBOLS[sym[0]] : cfg.defaultCurrency;\n  }\n\n  let vendor = find(/(?:^|\\n)\\s*(?:from|vendor|supplier|seller|bill(?:ed)?\\s+from)\\s*[:\\-]\\s*([^\\n]+)/i);\n  if (!vendor) vendor = lines.find((l) => !/invoice|^date|^page|^\\d/i.test(l)) || '';\n  vendor = vendor.replace(/\\s{2,}.*/, '').slice(0, 120);\n\n  const missing = [!vendor && 'vendor', !invoice_number && 'invoice_number', total === null && 'total'].filter(Boolean);\n  return {\n    json: {\n      received_at: src.received_at || '',\n      from: src.from || '',\n      subject: src.subject || '',\n      file_name: src.file_name || '',\n      vendor,\n      invoice_number,\n      invoice_date,\n      due_date,\n      currency,\n      total: total === null ? '' : total,\n      status: missing.length ? `needs review (missing: ${missing.join(', ')})` : 'parsed',\n    },\n  };\n});"
+      },
+      "id": "a347223d-47d5-5314-4755-2cb1569b0ffe",
+      "name": "Parse invoice fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.spreadsheetId }}",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "={{ $('Config').first().json.sheetName }}",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "3ff98822-c4b1-58b3-adee-740dec851d4d",
+      "name": "Append invoice to Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1220,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Watch invoice inbox": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Collect PDF attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect PDF attachments": {
+      "main": [
+        [
+          {
+            "node": "Extract text from PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract text from PDF": {
+      "main": [
+        [
+          {
+            "node": "Parse invoice fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse invoice fields": {
+      "main": [
+        [
+          {
+            "node": "Append invoice to Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
